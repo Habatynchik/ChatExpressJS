@@ -1,24 +1,13 @@
-const pool = require('./db')
+const runQuery = require('../configurations/db')
 
-const SELECT_ALL_MESSAGES = `
-    select m.id, message, user_id, username
-    from messages m
-             join users u on m.user_id = u.id;
-`
+const SELECT_ALL_MESSAGES = 'SELECT m.id, message, user_id, username FROM messages m JOIN users u ON m.user_id = u.id;'
 
-function getAllMessages() {
-    return runQuery(SELECT_ALL_MESSAGES)
-        .then((results) => results.rows);
-}
-
-async function runQuery(query) {
-    const client = await pool.connect();
+async function getAllMessages() {
     try {
-        return await client.query(query);
-    } catch (e) {
-        console.error(e);
-    } finally {
-        client.release();
+        let result = await runQuery(SELECT_ALL_MESSAGES)
+        return result.rows;
+    } catch (error) {
+        throw error;
     }
 }
 
