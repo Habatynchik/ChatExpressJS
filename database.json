@@ -4,7 +4,7 @@
     "user": "postgres",
     "password": "postgres",
     "host": "localhost",
-    "database": "chat",
+    "database": "postgres",
     "port": "5432",
     "schema": "public"
   }
