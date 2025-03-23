@@ -1,11 +1,11 @@
-let express = require('express');
-const {getAllMessages} = require("../model/messagesRepo");
-let router = express.Router();
+const express = require('express');
+const messagesRepository = require("../repositories/messagesRepository");
+const router = express.Router();
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send(getAllMessages())
-
+router.get('/', async function (req, res, next) {
+  const messages = await messagesRepository.getAllMessages()
+  res.send(messages)
 });
 
 module.exports = router;

@@ -1,5 +1,6 @@
 let createError = require('http-errors');
 let express = require('express');
+let session = require("express-session");
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
@@ -8,6 +9,8 @@ let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
 let messagesRouter = require('./routes/messages');
 let authRouter = require('./routes/auth');
+
+let authMiddleware = require('./middlewares/authMiddleware');
 
 let app = express();
 
@@ -20,6 +23,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: "secretKey",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60,
+    sameSite: "lax"
+  },
+  store: new session.MemoryStore()
+}));
+
+app.use(authMiddleware);
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
