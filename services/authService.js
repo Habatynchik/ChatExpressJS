@@ -11,7 +11,7 @@ const authService = {
         if (!user) {
             throw new Error("Username not found");
         }
-        let isPasswordCorrect = bcrypt.compare(password, user.password);
+        let isPasswordCorrect = await bcrypt.compare(password, user.password);
         if (isPasswordCorrect) {
             return user
         } else {

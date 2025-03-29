@@ -4,7 +4,14 @@ const userQueries = require('./queries/userQueries')
 const userRepository = {
     getAllUsers: () => {},
     getUserById: (id) => {},
-    getUserByUsername: (username) => {},
+    getUserByUsername: async (username) => {
+        try {
+            let data = await runQuery(userQueries.getUserByUsername, [username])
+            return data.rows[0];
+        } catch (error) {
+            throw error;
+        }
+    },
     getUserByUsernameAndPassword: async (username, password) => {
         try {
             let data = await runQuery(userQueries.getUserByUsernameAndPassword, [username, password])
