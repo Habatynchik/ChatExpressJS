@@ -7,6 +7,16 @@ const authService = {
         return await userRepository.createUser(username, password);
     },
     authenticate: async (username, password) => {
+        let user = await userRepository.getUserByUsername(username);
+        if (!user) {
+            throw new Error("Username not found");
+        }
+        let isPasswordCorrect = bcrypt.compare(password, user.password);
+        if (isPasswordCorrect) {
+            return user
+        } else {
+            throw new Error("Username or password is invalid.");
+        }
     },
     logout: async () => {
     }
