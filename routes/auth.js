@@ -11,7 +11,7 @@ router.post('/login', async function (req, res, next) {
     let password = req.body.password;
     try {
         let user = await authService.authenticate(username, password);
-        res.send(user);
+        res.redirect('/');
     } catch (error) {
         res.render('login', {error: error.message});
     }
@@ -25,7 +25,7 @@ router.post('/register', async function (req, res, next) {
     let username = req.body.username;
     let password = req.body.password;
     let user = await authService.register(username, password);
-    res.send(user);
+    res.render('/login', {error: null});
 });
 
 module.exports = router;
