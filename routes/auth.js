@@ -26,7 +26,7 @@ router.post('/register', async function (req, res, next) {
     let username = req.body.username;
     let password = req.body.password;
     let user = await authService.register(username, password);
-    res.render('/login', {error: null});
+    res.render('login', {error: null});
 });
 
 module.exports = router;

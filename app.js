@@ -10,6 +10,8 @@ let usersRouter = require('./routes/users');
 let messagesRouter = require('./routes/messages');
 let authRouter = require('./routes/auth');
 
+let authMiddleware = require('./middlewares/authMiddleware');
+
 let app = express();
 
 // view engine setup
@@ -22,11 +24,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/auth', authRouter);
-app.use('/messages', messagesRouter);
-
 app.use(session({
   secret: 'secret',
   resave: false,
@@ -37,6 +34,13 @@ app.use(session({
     maxAge: 1000 * 60 * 60 * 24,
   }
 }))
+
+app.use(authMiddleware);
+
+app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/auth', authRouter);
+app.use('/messages', messagesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
