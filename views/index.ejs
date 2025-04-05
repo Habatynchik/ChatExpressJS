@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <p>Welcome <%= user.username %></p>
-  </body>
+<head>
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+</head>
+<body>
+<p>Welcome <%= user.username %></p>
+
+<form action="/auth/logout" method="POST">
+    <button type="submit"> logout </button>
+</form>
+
+</body>
 </html>

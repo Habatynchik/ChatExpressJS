@@ -25,8 +25,16 @@ router.get('/register', function(req, res, next) {
 router.post('/register', async function (req, res, next) {
     let username = req.body.username;
     let password = req.body.password;
-    let user = await authService.register(username, password);
-    res.render('login', {error: null});
+    try {
+        let user = await authService.register(username, password);
+    } catch (e) {
+        res.render('login', {error: e.message});
+    }
 });
+
+router.post('/logout', async function (req, res, next) {
+    req.session.user = null;
+    res.redirect('/');
+})
 
 module.exports = router;
