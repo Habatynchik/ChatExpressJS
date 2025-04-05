@@ -1,5 +1,6 @@
 let createError = require('http-errors');
 let express = require('express');
+let session = require('cookie-session');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
@@ -25,6 +26,17 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/messages', messagesRouter);
+
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60 * 24,
+  }
+}))
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
