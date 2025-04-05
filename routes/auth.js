@@ -11,7 +11,7 @@ router.post('/login', async function (req, res, next) {
     let password = req.body.password;
     try {
         let user = await authService.authenticate(username, password);
-        req.session.user = user;
+        req.session.user = {id: user.id, username:user.username};
         res.redirect('/');
     } catch (error) {
         res.render('login', {error: error.message});
