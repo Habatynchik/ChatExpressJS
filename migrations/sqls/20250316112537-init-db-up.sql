@@ -27,3 +27,18 @@ create table friends
     foreign key (first_user_id) references users (id),
     foreign key (second_user_id) references users (id)
 );
+
+create table chats
+(
+    id          serial,
+    name        varchar(64),
+    description varchar,
+    logo_url    varchar,
+
+    primary key (id)
+);
+
+
+alter table messages
+    add chat_id int,
+    add foreign key (chat_id) references chats(id);
