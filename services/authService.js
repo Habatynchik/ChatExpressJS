@@ -1,4 +1,4 @@
-const userRepository = require('../model/userRepository');
+const userRepository = require('../repositories/userRepository');
 const bcrypt = require('bcrypt');
 
 const authService = {

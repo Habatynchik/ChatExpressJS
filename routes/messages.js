@@ -1,5 +1,5 @@
 let express = require('express');
-const {getAllMessages} = require("../model/messageRepository");
+const {getAllMessages} = require("../repositories/messageRepository");
 let router = express.Router();
 
 /* GET users listing. */
