@@ -38,7 +38,17 @@ create table chats
     primary key (id)
 );
 
-
 alter table messages
     add chat_id int,
-    add foreign key (chat_id) references chats(id);
+    add foreign key (chat_id) references chats (id);
+
+create table chat_members
+(
+    id      serial,
+    chat_id int,
+    user_id int,
+
+    primary key (id),
+    foreign key (chat_id) references chats (id),
+    foreign key (user_id) references users (id)
+);
