@@ -1,11 +1,16 @@
 const chatRepository =  require("../repositories/chatRepository")
+const chatMembersRepository = require("../repositories/chatMembersRepository")
 
 const chatService = {
     createChat: async (chat) => {
-        return await chatRepository.createChat(chat);
+        chat =  await chatRepository.createChat(chat);
+        return chat
     },
-    addMemberIntoChat: async (chatId, memberId) => {
-
+    addMemberIntoChat: async (memberId, chatId) => {
+       return await chatMembersRepository.addMemberIntoChat(chatId, memberId);
+    },
+    deleteMemberFromChat: async ( memberId, chatId) => {
+        return await chatMembersRepository.deleteMemberFromChat(chatId);
     }
 }
 

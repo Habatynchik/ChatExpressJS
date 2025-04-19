@@ -2,16 +2,18 @@ const runQuery = require('../configurations/db')
 const chatMembersQueries = require('../repositories/queries/chatMembersQueries')
 
 const chatMembersRepository = {
-    addMemberIntoChat: async (chatId, memberId) => {
+    addMemberIntoChat: async (memberId, chatId) => {
         try {
-            let result = await runQuery(chatMembersQueries.CREATE_CHAT_MEMBER, [chatId, memberId])
+            let result = await runQuery(chatMembersQueries.CREATE_CHAT_MEMBER, [memberId, chatId])
+            return result.rows[0]
         } catch (error) {
             throw error
         }
     },
-    deleteMemberFromChat: async (chatId, memberId) => {
+    deleteMemberFromChat: async (memberId, chatId) => {
         try {
-            let result = await runQuery(chatMembersQueries.DELETE_CHAT_MEMBER, [chatId, memberId])
+            await runQuery(chatMembersQueries.DELETE_CHAT_MEMBER, [memberId, chatId])
+            return true;
         } catch (error) {
             throw error
         }
