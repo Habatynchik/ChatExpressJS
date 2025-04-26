@@ -14,6 +14,7 @@ router.get('/', function (req, res, next) {
         })
 })
 router.post('/create', function (req, res, next) {
+    let userId = req.session.user.id;
     let chat = {
         name: req.body.name,
         description: req.body.description,
@@ -21,6 +22,7 @@ router.post('/create', function (req, res, next) {
     }
     chatService.createChat(chat)
         .then((chat) => {
+
             res.send(chat);
         })
         .catch((error) => {
@@ -44,6 +46,9 @@ router.put('/:id/update', function (req, res, next) {
         })
 })
 router.delete('/:id/delete', function (req, res, next) {
+     chatService.deleteChat(req.params.id).then((res) => {
+         res.send(res)
+     })
 })
 router.post('/:id/add-member', function (req, res, next) {
 })
