@@ -3,6 +3,16 @@ let router = express.Router();
 
 let chatService = require('../services/chatService');
 
+router.get('/', function (req, res, next) {
+    let userId = req.session.user.id;
+    chatService.getAllChats(userId)
+        .then((chats) => {
+            res.send(chats)
+        })
+        .catch((error) => {
+            res.send(error)
+        })
+})
 router.post('/create', function (req, res, next) {
     let chat = {
         name: req.body.name,
@@ -18,13 +28,14 @@ router.post('/create', function (req, res, next) {
         })
 })
 router.put('/:id/update', function (req, res, next) {
+    let userId = req.session.user.id;
     let chat = {
         id: req.params.id,
         name: req.body.name,
         description: req.body.description,
         logo_url: req.body.logo_url,
     }
-    chatService.updateChat(chat)
+    chatService.updateChat(userId, chat)
         .then((chat) => {
             res.send(chat);
         })
