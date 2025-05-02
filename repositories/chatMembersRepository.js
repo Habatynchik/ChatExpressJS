@@ -17,6 +17,14 @@ const chatMembersRepository = {
         } catch (error) {
             throw error
         }
+    },
+    getAllMembersFromChat: async (chatId) => {
+        try {
+            let result = await runQuery(chatMembersQueries.SELECT_CHAT_MEMBERS, [chatId])
+            return result.rows;
+        } catch (error) {
+            throw error
+        }
     }
 }
 

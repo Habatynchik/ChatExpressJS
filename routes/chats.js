@@ -1,6 +1,6 @@
 let express = require('express');
 let router = express.Router();
-
+let messageService = require('../services/messageService');
 let chatService = require('../services/chatService');
 
 router.get('/', function (req, res, next) {
@@ -13,7 +13,19 @@ router.get('/', function (req, res, next) {
             res.send(error)
         })
 })
-router.post('/create', function (req, res, next) {
+
+router.get('/:id', function (req, res, next) {
+    let chatId = req.params.id;
+    chatService.getChat(chatId)
+        .then((chat) => {
+            res.send(chat)
+        })
+        .catch((error) => {
+            res.send(error)
+        })
+})
+
+router.post('/', function (req, res, next) {
     let userId = req.session.user.id;
     let chat = {
         name: req.body.name,
@@ -21,15 +33,16 @@ router.post('/create', function (req, res, next) {
         logo_url: req.body.logo_url,
     }
     chatService.createChat(chat)
-        .then((chat) => {
-
+        .then(async (chat) => {
+            await chatService.addMemberIntoChat(userId, chat.id)
             res.send(chat);
         })
         .catch((error) => {
             res.send(error);
         })
 })
-router.put('/:id/update', function (req, res, next) {
+
+router.put('/:id', function (req, res, next) {
     let userId = req.session.user.id;
     let chat = {
         id: req.params.id,
@@ -45,16 +58,72 @@ router.put('/:id/update', function (req, res, next) {
             res.send(error);
         })
 })
-router.delete('/:id/delete', function (req, res, next) {
-     chatService.deleteChat(req.params.id).then((res) => {
-         res.send(res)
-     })
+
+router.delete('/:id', function (req, res, next) {
+    chatService.deleteChat(req.params.id).then((res) => {
+        res.send(res)
+    })
 })
-router.post('/:id/add-member', function (req, res, next) {
+
+
+router.post('/:id/members', function (req, res, next) {
+    let chatId = req.params.id;
+    let members = req.body.members
+    chatService.addMembersIntoChat(members, chatId)
+        .then((res) => {
+            res.send(res);
+        })
+        .catch((error) => {
+            res.send(error);
+        })
 })
-router.delete('/:id/remove-member', function (req, res, next) {
+
+router.delete('/:id/members', function (req, res, next) {
+    let chatId = req.params.id;
+    let members = req.body.members
+    chatService.deleteMembersFromChat(members, chatId)
+        .then((res) => {
+            res.send(res);
+        })
+        .catch((error) => {
+            res.send(error);
+        })
 })
+
 router.get('/:id/members', function (req, res, next) {
+    let chatId = req.params.id;
+    chatService.getAllMembersFromChat(chatId)
+        .then((members) => {
+            res.send(members);
+        })
+        .catch((error) => {
+            res.send(error);
+        })
+})
+
+router.get('/:id/messages', function (req, res, next) {
+    let chatId = req.params.id;
+    messageService.getMessageByChatId(chatId)
+        .then((messages) => {
+            res.send(messages);
+        })
+        .catch((error) => {
+            res.send(error);
+        })
+})
+
+router.post('/:id/messages', function (req, res, next) {
+    let chatId = req.params.id;
+    let userId = req.session.user.id;
+    let message = req.body.message;
+
+    messageService.insertMessage(message, userId, chatId)
+        .then((message) => {
+            res.send(message);
+        })
+        .catch((error) => {
+            res.send(error);
+        })
 })
 
 module.exports = router;

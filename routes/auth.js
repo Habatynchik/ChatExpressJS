@@ -19,7 +19,7 @@ router.post('/login', async function (req, res, next) {
 });
 
 router.get('/register', function(req, res, next) {
-    res.render('register');
+    res.render('register', {error: null});
 });
 
 router.post('/register', async function (req, res, next) {
@@ -27,8 +27,9 @@ router.post('/register', async function (req, res, next) {
     let password = req.body.password;
     try {
         let user = await authService.register(username, password);
+        res.render('login', {error: null});
     } catch (e) {
-        res.render('login', {error: e.message});
+        res.render('register', {error: e.message});
     }
 });
 

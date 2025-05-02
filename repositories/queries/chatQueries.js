@@ -7,9 +7,8 @@ const chatMessages =  {
     `,
     SELECT_ALL_CHATS_BY_USER_ID: `
         SELECT c.* FROM chats c 
-            JOIN messages m on c.id = m.chat_id 
-            JOIN users u on m.user_id = u.id 
-                   WHERE u.id = $1;
+            JOIN chat_members cm on c.id = cm.chat_id 
+                   WHERE cm.user_id = $1;
     `,
     CREATE_CHAT: `
         INSERT INTO chats (name, description, logo_url) 

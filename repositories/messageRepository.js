@@ -18,10 +18,10 @@ const messageRepository = {
             throw error;
         }
     },
-    insertMessage: async (message) => {
+    insertMessage: async (message, userId, chatId) => {
         try {
             let result = await runQuery(messageQueries.INSERT_MESSAGE,
-                [message.message, message.user_id, message.chat_id]);
+                [message, userId, chatId]);
             return result.rows;
         } catch (error) {
             throw error;

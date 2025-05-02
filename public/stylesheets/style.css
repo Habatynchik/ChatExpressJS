@@ -1,8 +1,66 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+* {
+  margin: 0;
+  padding: 0;
+}
+header {
+  display: flex;
+  justify-content: end;
+  height: 5vh;
+  width: 100vw;
+  background-color: aquamarine;
 }
 
-a {
-  color: #00B7FF;
+.main {
+  display: flex;
+  width: 100vw;
+  height: 95vh;
+}
+
+.chats-block {
+  background-color: rgb(98, 160, 139);
+  width: 20vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.messenger-block {
+  background-color: rgb(80, 154, 129);
+  width: 80vw;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.messages {
+  height: 100%;
+  width: 100%;
+}
+
+.messenger-block form {
+  padding: 10px;
+  display: flex;
+}
+
+.messenger-block form input{
+  width: 100%;
+}
+
+.chats {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 25px 0;
+  height: 100%;
+  overflow-y: scroll;
+}
+
+.chats div{
+  padding: 10px 0;
+}
+
+.create-chat {
+  width: 100%;
+  text-align: center;
+  padding: 20px 0;
+  background-color: blanchedalmond;
 }

@@ -1,22 +1,41 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.7.1.js'></script>
     <script src='/javascripts/index.js'></script>
 </head>
+
 <body>
-<p>Welcome <%= user.username %></p>
+    <header>
+        <p>
+            <%= user.username %>
+        </p>
 
-<form action="/auth/logout" method="POST">
-    <button type="submit"> logout</button>
-</form>
+        <form action="/auth/logout" method="POST">
+            <button type="submit"> logout</button>
+        </form>
+    </header>
 
-<div class='main'>
-    <div class="chats"></div>
-    <div class="messenger"></div>
-    <div class="friends"></div>
-</div>
+    <div class='main'>
+        <div class="chats-block">
+            <div class="chats">
+
+            </div>
+            <div class="create-chat">
+                create-chat
+            </div>
+        </div>
+        <div class="messenger-block">
+            <div class="messages"></div>
+            <form action="">
+                <input type="text">
+                <button>Send</button>
+            </form>
+        </div>
+    </div>
 
 </body>
+
 </html>

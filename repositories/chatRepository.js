@@ -2,18 +2,18 @@ const runQuery = require('../configurations/db')
 const chatQueries = require('./queries/chatQueries')
 
 const chatRepository = {
-    getChat: async (id) => {
-        try {
-            let result = await runQuery(chatQueries.SELECT_CHAT_BY_ID, [id])
-            return result.rows[0];
-        } catch (error) {
-            throw error;
-        }
-    },
     getAllChats: async () => {
         try {
             let result = await runQuery(chatQueries.SELECT_ALL_CHATS)
             return result.rows;
+        } catch (error) {
+            throw error;
+        }
+    },
+    getChat: async (id) => {
+        try {
+            let result = await runQuery(chatQueries.SELECT_CHAT_BY_ID, [id])
+            return result.rows[0];
         } catch (error) {
             throw error;
         }

@@ -7,7 +7,6 @@ let logger = require('morgan');
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
-let messagesRouter = require('./routes/messages');
 let authRouter = require('./routes/auth');
 let chatsRouter = require('./routes/chats');
 
@@ -41,7 +40,6 @@ app.use(authMiddleware);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
-app.use('/messages', messagesRouter);
 app.use('/chats', chatsRouter);
 
 
