@@ -14,7 +14,7 @@ $(document).ready(function () {
         let chat = {
             name: prompt("Enter chat name"),
             description: "none",
-            logo_url: "none",
+            logo_url: "https://img.cryptorank.io/coins/stonks1732650263205.png",
         };
         $.ajax({
             type: "POST",
