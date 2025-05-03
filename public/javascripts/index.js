@@ -1,6 +1,12 @@
 $(document).ready(function () {
     renderAllChats();
 
+    $('.send-btn').click(async function (e) {
+        let chatId = $(".messenger-header").attr('active-chat');
+        let message = $(".message-input").val();  
+        await sendMessage(chatId, message);
+    });
+
     $(document).on("click", ".chat", async function () {
         let chatId = $(this).attr("chat-id");
         let chat = await getChatInfo(chatId);
@@ -66,9 +72,19 @@ async function getAllMessagesFromChat(chatId) {
     });
 }
 
+async function sendMessage(chatId, message) {
+    return await $.ajax({
+        type: "POST",
+        url: `/chats/${chatId}/messages`,
+        data: {
+            message: message
+        },
+    });
+}
 
 function renderChatHeader(chatInfo){
     $(".messenger-header").html('');
+    $(".messenger-header").attr('active-chat', chatInfo.id);
     $('.messenger-header').append(`
         <img src="${chatInfo.logo_url}" alt="">
         <h1>${chatInfo.name}</h1>
