@@ -7,13 +7,26 @@ $(document).ready(function () {
         await sendMessage(chatId, message);
     });
 
+    $(document).on('click', '.messenger-header button', function () {
+        let chatId = $(".messenger-header").attr('active-chat');
+        $.ajax({
+            type: 'POST',
+            url: `/chats/${chatId}/members`,
+            data: {
+                members: [
+                    {id: prompt("Enter userID")}
+                ]
+            },
+        });
+    });
+
     $(document).on("click", ".chat", async function () {
         let chatId = $(this).attr("chat-id");
         let chat = await getChatInfo(chatId);
         let messages = await getAllMessagesFromChat(chatId)
         renderActiveChat(chatId)
         renderChatHeader(chat)
-        console.log(messages)
+        renderChat(messages)
     });
 
     $(".create-chat").click(function (e) {
@@ -80,6 +93,15 @@ async function sendMessage(chatId, message) {
             message: message
         },
     });
+}
+
+function renderChat(messages) {
+    $(".messages").html('');
+    messages.forEach(m => {
+        $('.messages').append(`
+            <div> ${m.username}: ${m.message} </div>
+        `);
+    })
 }
 
 function renderChatHeader(chatInfo){
