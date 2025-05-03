@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
 }
+
 header {
   display: flex;
   justify-content: end;
@@ -21,14 +22,36 @@ header {
   width: 20vw;
   display: flex;
   flex-direction: column;
-  user-select: none; 
+  user-select: none;
 }
 
 .messenger-block {
   background-color: rgb(80, 154, 129);
-  width: 80vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+.users-block {
+  width: 20vw;
+  background-color: rgb(80, 154, 129);
+}
+
+.users-header {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  background-color: bisque;
+}
+
+.burger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.messenger-header .burger {
   height: 100%;
 }
 
@@ -36,15 +59,58 @@ header {
   height: 100%;
   width: 100%;
   overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 
-.messenger-block form {
+.messages .message {
+  margin: 1px 0;
+  background: #0400002b;
+  color: rgb(67, 25, 25);
+  font-size: 1.5rem;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-family: 'Times New Roman', Times, serif;
+  max-width: 500px;      
+}
+
+.messages .my-message {
+  align-self: flex-end;
+}
+
+.messages .message pre {
+  color: black;
+  font-size: 1rem;
+  font-family: 'Times New Roman', Times, serif;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Hide scroll */
+.messages {
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.messages::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+
+.messenger-block .messanger-form {
   padding: 10px;
   display: flex;
 }
 
-.messenger-block form input{
+.messenger-block .messanger-form .message-input {
   width: 100%;
+  resize: none;
+  overflow: hidden;
+  min-height: 1em;
+  line-height: 1.2em;
 }
 
 .chats {
@@ -55,13 +121,15 @@ header {
   overflow-y: scroll;
 }
 
-.chats::-webkit-scrollbar { 
-  display: none;  /* Safari and Chrome */
+.chats::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
 }
 
-.chats div{
+.chats div {
   padding: 10px 0;
 }
+
 .chat {
   width: 100%;
   text-align: center;
@@ -73,6 +141,7 @@ header {
   padding: 20px 0;
   background-color: blanchedalmond;
 }
+
 .chat[active='true'] {
   background-color: blueviolet;
 }
