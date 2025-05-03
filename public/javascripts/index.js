@@ -65,3 +65,13 @@ async function getAllMessagesFromChat(chatId) {
         url: `/chats/${chatId}/messages`,
     });
 }
+
+
+function renderChatHeader(chatInfo){
+    $(".messenger-header").html('');
+    $('.messenger-header').append(`
+        <img src="${chatInfo.logo_url}" alt="">
+        <h1>${chatInfo.name}</h1>
+        <button>Add user</button>    
+    `);    
+}
