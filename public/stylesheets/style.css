@@ -75,3 +75,18 @@ header {
 .chat[active='true'] {
   background-color: blueviolet;
 }
+
+.messenger-header {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  background-color: bisque;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.messenger-header img {
+  height: 80%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+}

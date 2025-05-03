@@ -6,7 +6,7 @@ $(document).ready(function () {
         let chat = await getChatInfo(chatId);
         let messages = await getAllMessagesFromChat(chatId)
         renderActiveChat(chatId)
-        console.log(chat)
+        renderChatHeader(chat)
         console.log(messages)
     });
 
