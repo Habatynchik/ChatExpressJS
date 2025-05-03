@@ -4,6 +4,7 @@ $(document).ready(function () {
     $('.send-btn').click(async function (e) {
         let chatId = $(".messenger-header").attr('active-chat');
         let message = $(".message-input").val();  
+        $(".message-input").val('');  
         await sendMessage(chatId, message);
     });
 
