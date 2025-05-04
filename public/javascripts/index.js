@@ -8,16 +8,53 @@ $(document).ready(function () {
         await sendMessage(chatId, message);
     });
 
-    $(document).on('click', '.messenger-header button', function () {
+    $(document).on('click', '.messenger-header button', async function () {
         let chatId = $(".messenger-header").attr('active-chat');
+        let chat = await getChatInfo(chatId);
+        
         $.ajax({
-            type: 'POST',
-            url: `/chats/${chatId}/members`,
-            data: {
-                members: [
-                    {id: prompt("Enter userID")}
-                ]
-            },
+            type: 'GET',
+            url: '/users',
+            success: function(users) {
+                let userListHtml = $.map(users, function(user) {
+                    return `<div class='user-option' data-user-id='${user.id}'>${user.username}</div>`;
+                }).join('');
+                let modalHtml = `
+                    <div class='modal'>
+                        <div class='modal-container'>
+                            <div class='modal-header'>
+                                <h2>Add user to ${chat.name}</h2>
+                                <button class='close-modal'>×</button>
+                            </div>
+                            <div class='modal-content'>
+                                <div class='user-list'>${userListHtml}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                $('body').append(modalHtml);
+                
+                $('.user-option').on('click', function() {
+                    let userId = $(this).data('user-id');
+                    $.ajax({
+                        type: 'POST',
+                        url: `/chats/${chatId}/members`,
+                        data: JSON.stringify({
+                            members: [{ id: userId }]
+                        }),
+                        contentType: 'application/json',
+                        success: function() {
+                            $('.modal').remove();
+                            alert('User added successfully!');
+                        }
+                    });
+                });
+                
+                $('.close-modal').on('click', function() {
+                    $('.modal').remove();
+                });
+            }
         });
     });
 
@@ -50,10 +87,11 @@ $(document).ready(function () {
 });
 
 function renderActiveChat(chatId) {
-    $(".chat").each(function(e) {
-        $(this).attr('active', false);
-    }) 
-    $(`.chat[chat-id='${chatId}']`).attr('active', true);
+    $(".chat").each(function() {
+        $(this).attr('active', 'false');
+    });
+    
+    $(`.chat[chat-id='${chatId}']`).attr('active', 'true');
 }
 
 function renderAllChats() {
@@ -62,7 +100,7 @@ function renderAllChats() {
         url: "/chats/",
         success: function (chats) {
             $(".chats").html("");
-            chats.forEach((chat) => {
+            $.each(chats, function(index, chat) {
                 $(".chats").append(
                     `<div class='chat' chat-id='${chat.id}'>${chat.name}</div>`
                 );
@@ -81,7 +119,6 @@ async function getChatInfo(chatId) {
 async function getAllMessagesFromChat(chatId) {
     return await $.ajax({
         type: "GET",
-        async: false,
         url: `/chats/${chatId}/messages`,
     });
 }
@@ -98,7 +135,7 @@ async function sendMessage(chatId, message) {
 
 function renderChat(messages) {
     $(".messages").html('');
-    messages.forEach(m => {
+    $.each(messages, function(index, m) {
         $('.messages').append(`
             <div> ${m.username}: ${m.message} </div>
         `);
