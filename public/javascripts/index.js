@@ -1,17 +1,35 @@
 $(document).ready(function () {
     renderAllChats();
 
-    $('.send-btn').click(async function (e) {
-        let chatId = $(".messenger-header").attr('active-chat');
-        let message = $(".message-input").val();  
-        $(".message-input").val('');  
-        await sendMessage(chatId, message);
+    $(".send-btn").click(async function () {
+        await handleSend();
+    });
+
+    $(".message-input").keydown(async function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            await handleSend();
+        }
+    });
+
+    async function handleSend() {
+        let chatId = $(".messenger-header").attr("active-chat");
+        let message = $(".message-input").val().trim();
+        if (message) {
+            message = $(".message-input").val();
+            $(".message-input").val("");
+            await sendMessage(chatId, message);
+        }
+    }
+
+    $(document).on("click", ".messenger-header .burger", function () {
+        $(".users-block").toggle();
     });
 
     $(document).on('click', '.messenger-header button', async function () {
         let chatId = $(".messenger-header").attr('active-chat');
         let chat = await getChatInfo(chatId);
-        
+
         $.ajax({
             type: 'GET',
             url: '/users',
@@ -32,9 +50,9 @@ $(document).ready(function () {
                         </div>
                     </div>
                 `;
-                
+
                 $('body').append(modalHtml);
-                
+
                 $('.user-option').on('click', function() {
                     let userId = $(this).data('user-id');
                     $.ajax({
@@ -50,7 +68,7 @@ $(document).ready(function () {
                         }
                     });
                 });
-                
+
                 $('.close-modal').on('click', function() {
                     $('.modal').remove();
                 });
@@ -61,10 +79,10 @@ $(document).ready(function () {
     $(document).on("click", ".chat", async function () {
         let chatId = $(this).attr("chat-id");
         let chat = await getChatInfo(chatId);
-        let messages = await getAllMessagesFromChat(chatId)
-        renderActiveChat(chatId)
-        renderChatHeader(chat)
-        renderChat(messages)
+        let messages = await getAllMessagesFromChat(chatId);
+        renderActiveChat(chatId);
+        renderChatHeader(chat);
+        renderChat(messages);
     });
 
     $(".create-chat").click(function (e) {
@@ -84,13 +102,17 @@ $(document).ready(function () {
             },
         });
     });
+
+    $(".message-input").on("input", function () {
+        $(this).height(0);
+        $(this).height(this.scrollHeight);
+    });
 });
 
 function renderActiveChat(chatId) {
     $(".chat").each(function() {
         $(this).attr('active', 'false');
     });
-    
     $(`.chat[chat-id='${chatId}']`).attr('active', 'true');
 }
 
@@ -112,7 +134,7 @@ function renderAllChats() {
 async function getChatInfo(chatId) {
     return await $.ajax({
         type: "GET",
-        url: `/chats/${chatId}`
+        url: `/chats/${chatId}`,
     });
 }
 
@@ -128,7 +150,7 @@ async function sendMessage(chatId, message) {
         type: "POST",
         url: `/chats/${chatId}/messages`,
         data: {
-            message: message
+            message: message,
         },
     });
 }
@@ -139,15 +161,18 @@ function renderChat(messages) {
         $('.messages').append(`
             <div> ${m.username}: ${m.message} </div>
         `);
-    })
+    });
 }
 
-function renderChatHeader(chatInfo){
-    $(".messenger-header").html('');
-    $(".messenger-header").attr('active-chat', chatInfo.id);
-    $('.messenger-header').append(`
+function renderChatHeader(chatInfo) {
+    $(".messenger-header").html("");
+    $(".messenger-header").attr("active-chat", chatInfo.id);
+    $(".messenger-header").append(`
         <img src="${chatInfo.logo_url}" alt="">
         <h1>${chatInfo.name}</h1>
-        <button>Add user</button>    
-    `);    
+        <button>Add user</button> 
+        <div class="burger"> 
+            <img src = '../images/burger.png'>
+        </div>   
+    `);
 }
