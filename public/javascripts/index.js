@@ -32,9 +32,9 @@ $(document).ready(function () {
 
         $.ajax({
             type: 'GET',
-            url: '/users',
-            success: function(users) {
-                let userListHtml = $.map(users, function(user) {
+            url: `/users/available/${chatId}`,
+            success: function (users) {
+                let userListHtml = users.length === 0 ? 'No users available' : $.map(users, function (user) {
                     return `<div class='user-option' data-user-id='${user.id}'>${user.username}</div>`;
                 }).join('');
                 let modalHtml = `
