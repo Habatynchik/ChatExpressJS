@@ -100,7 +100,7 @@ function renderChat(messages) {
     $(".messages").html('');
     messages.forEach(m => {
         $('.messages').append(`
-            <div> ${m.username}: ${m.message} </div>
+            <div class="message-text"> <p style="margin-bottom: 0"> <b> ${m.username} </b> <br> ${m.message} </p>  </div>
         `);
     })
 }
@@ -111,6 +111,6 @@ function renderChatHeader(chatInfo){
     $('.messenger-header').append(`
         <img src="${chatInfo.logo_url}" alt="">
         <h1>${chatInfo.name}</h1>
-        <button>Add user</button>    
+        <button class="add-user">Add user</button>    
     `);    
 }
