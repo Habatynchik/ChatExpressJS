@@ -11,4 +11,14 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+router.get('/available/:chatId', async function(req, res, next) {
+  try {
+    const chatId = req.params.chatId;
+    const availableUsers = await userRepository.getAllUsersNotInChat(chatId);
+    res.json(availableUsers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
