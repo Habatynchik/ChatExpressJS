@@ -156,10 +156,10 @@ async function sendMessage(chatId, message) {
 }
 
 function renderChat(messages) {
-    $(".messages").html('');
-    $.each(messages, function(index, m) {
-        $('.messages').append(`
-            <div> ${m.username}: ${m.message} </div>
+    $(".messages").html("");
+    messages.forEach((m) => {
+        $(".messages").append(`
+            <div class="message ${m.user_id == myUserId? "my-message" : ''}" > ${m.user_id != myUserId? m.username : ''} <pre>${m.message}</pre> </div>
         `);
     });
 }
