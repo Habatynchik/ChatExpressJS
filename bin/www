@@ -4,9 +4,12 @@
  * Module dependencies.
  */
 
-var app = require('../app');
-var debug = require('debug')('chat:server');
-var http = require('http');
+const app = require('../app');
+const debug = require('debug')('chat:server');
+const http = require('http');
+const socketIo = require('socket.io');
+
+const chatSocket = require('../sockets/chat');
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +23,10 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+
+const io = socketIo(server);
+chatSocket(io);
+app.io = io;
 
 /**
  * Listen on provided port, on all network interfaces.

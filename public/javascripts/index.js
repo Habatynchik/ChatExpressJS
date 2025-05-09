@@ -1,5 +1,48 @@
+// Initialize socket.io connection
+const socket = io();
+
+function isCurrentChat(chatId) {
+    let currentChatId = $(".messenger-header").attr("active-chat");
+    return currentChatId === chatId;
+}
+
+socket.on("message-received", function (data) {
+    // Only update UI if we're currently viewing this chat
+    if (isCurrentChat(data.chatId)) {
+        appendMessage(data);
+    }
+});
+
+socket.on("start-writing", function (data) {
+    if (isCurrentChat(data.chatId)) {
+        addWriters(data.username);
+    }
+});
+
+socket.on("end-writing", function (data) {
+    if (isCurrentChat(data.chatId)) {
+        removeWriters(data.username);
+    }
+});
+
 $(document).ready(function () {
     renderAllChats();
+
+    $(document).on("focus", ".message-input", function () {
+        let currentChatId = $(".messenger-header").attr("active-chat");
+        socket.emit("start-writing", {
+            chatId: currentChatId,
+            username: myUsername,
+        });
+    });
+
+    $(document).on("blur", ".message-input", function () {
+        let currentChatId = $(".messenger-header").attr("active-chat");
+        socket.emit("end-writing", {
+            chatId: currentChatId,
+            username: myUsername,
+        });
+    });
 
     $(".send-btn").click(async function () {
         await handleSend();
@@ -78,6 +121,16 @@ $(document).ready(function () {
 
     $(document).on("click", ".chat", async function () {
         let chatId = $(this).attr("chat-id");
+
+        // Leave previous chat room if any
+        let previousChatId = $(".messenger-header").attr("active-chat");
+        if (previousChatId) {
+            socket.emit("leave-chat", previousChatId);
+        }
+
+        // Join new chat room
+        socket.emit("join-chat", chatId);
+
         let chat = await getChatInfo(chatId);
         let messages = await getAllMessagesFromChat(chatId);
         renderActiveChat(chatId);
@@ -146,22 +199,35 @@ async function getAllMessagesFromChat(chatId) {
 }
 
 async function sendMessage(chatId, message) {
-    return await $.ajax({
-        type: "POST",
-        url: `/chats/${chatId}/messages`,
-        data: {
-            message: message,
-        },
-    });
+    try {
+        const result = await $.ajax({
+            type: "POST",
+            url: `/chats/${chatId}/messages`,
+            data: {
+                message: message,
+            },
+        });
+        return result;
+    } catch (error) {
+        console.error("Error sending message:", error);
+        throw error;
+    }
 }
 
 function renderChat(messages) {
     $(".messages").html("");
     messages.forEach((m) => {
-        $(".messages").append(`
-            <div class="message ${m.user_id == myUserId? "my-message" : ''}" > ${m.user_id != myUserId? m.username : ''} <pre>${m.message}</pre> </div>
-        `);
+        appendMessage(m);
     });
+}
+
+function appendMessage(m) {
+    $(".messages").append(`
+        <div class="message ${m.user_id == myUserId ? "my-message" : ""}" > ${
+        m.user_id != myUserId ? m.username : ""
+    } <pre>${m.message}</pre> </div>
+    `);
+    $(".messages").scrollTop($(".messages")[0].scrollHeight);
 }
 
 function renderChatHeader(chatInfo) {
@@ -175,4 +241,16 @@ function renderChatHeader(chatInfo) {
             <img src = '../images/burger.png'>
         </div>   
     `);
+}
+
+function addWriters(name) {
+    if (name != myUsername) {
+        $(".writers").append(`
+            <div class="${name}"> ${name} is writing ... </div>
+        `);
+    }
+}
+
+function removeWriters(name) {
+    $(`.writers .${name}`).remove();
 }

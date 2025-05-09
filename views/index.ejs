@@ -4,8 +4,10 @@
 <head>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.7.1.js'></script>
+    <script src='/socket.io/socket.io.js'></script>
     <script>
         const myUserId = <%= user.id %>;
+        const myUsername = '<%= user.username %>';
     </script>
     <script src='/javascripts/index.js'></script>
 </head>
@@ -33,6 +35,7 @@
         <div class="messenger-block">
             <div class="messenger-header"></div>
             <div class="messages"></div>
+            <div class="writers"></div>
             <div class="messanger-form">
                 <textarea class="message-input" rows="1"></textarea>
                 <button class="send-btn" type="button">Send</button>

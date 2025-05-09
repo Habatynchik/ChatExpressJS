@@ -112,14 +112,23 @@ router.get('/:id/messages', function (req, res, next) {
         })
 })
 
-router.post('/:id/messages', function (req, res, next) {
+router.post('/:id/messages', async function (req, res, next) {
     let chatId = req.params.id;
     let userId = req.session.user.id;
     let message = req.body.message;
 
     messageService.insertMessage(message, userId, chatId)
-        .then((message) => {
-            res.send(message);
+        .then((messageData) => {
+            if (req.app.io) {
+                req.app.io.to(chatId).emit('message-received', {
+                    chatId: chatId,
+                    message: message,
+                    user_id: userId,
+                    username: req.session.user.username,
+                    ...messageData
+                });
+            }
+            res.sendStatus(200)
         })
         .catch((error) => {
             res.send(error);
