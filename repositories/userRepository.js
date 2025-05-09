@@ -10,6 +10,14 @@ const userRepository = {
             throw error;
         }
     },
+    getAllUsersNotInChat: async (chatId) => {
+        try {
+            let data = await runQuery(userQueries.SELECT_ALL_USERS_NOT_IN_CHT, [chatId])
+            return data.rows;
+        } catch (error) {
+            throw error;
+        }
+    },
     getUser: async (id) => {
         try {
             let data = await runQuery(userQueries.SELECT_USER_BY_ID, [id])
