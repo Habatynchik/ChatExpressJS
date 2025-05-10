@@ -121,7 +121,7 @@ router.post('/:id/messages', function (req, res, next) {
         .then((messageData) => {
             req.app.io.to(chatId).emit('send-message', {
                 chatId: chatId,
-                userId: userId,
+                user_id: userId,
                 username: req.session.user.username,
                 message: message,
             })

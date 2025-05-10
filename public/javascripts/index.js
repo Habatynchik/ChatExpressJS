@@ -1,8 +1,8 @@
 let socket = io();
 
 socket.on("send-message", function (data) {
-    console.log(data)
-})
+    appendMessage(data);
+});
 
 $(document).ready(function () {
     renderAllChats();
@@ -32,17 +32,20 @@ $(document).ready(function () {
         $(".users-block").toggle();
     });
 
-    $(document).on('click', '.messenger-header button', async function () {
-        let chatId = $(".messenger-header").attr('active-chat');
+    $(document).on("click", ".messenger-header button", async function () {
+        let chatId = $(".messenger-header").attr("active-chat");
         let chat = await getChatInfo(chatId);
 
         $.ajax({
-            type: 'GET',
+            type: "GET",
             url: `/users/available/${chatId}`,
             success: function (users) {
-                let userListHtml = users.length === 0 ? 'No users available' : $.map(users, function (user) {
-                    return `<div class='user-option' data-user-id='${user.id}'>${user.username}</div>`;
-                }).join('');
+                let userListHtml =
+                    users.length === 0
+                        ? "No users available"
+                        : $.map(users, function (user) {
+                              return `<div class='user-option' data-user-id='${user.id}'>${user.username}</div>`;
+                          }).join("");
                 let modalHtml = `
                     <div class='modal'>
                         <div class='modal-container'>
@@ -57,40 +60,40 @@ $(document).ready(function () {
                     </div>
                 `;
 
-                $('body').append(modalHtml);
+                $("body").append(modalHtml);
 
-                $('.user-option').on('click', function() {
-                    let userId = $(this).data('user-id');
+                $(".user-option").on("click", function () {
+                    let userId = $(this).data("user-id");
                     $.ajax({
-                        type: 'POST',
+                        type: "POST",
                         url: `/chats/${chatId}/members`,
                         data: JSON.stringify({
-                            members: [{ id: userId }]
+                            members: [{ id: userId }],
                         }),
-                        contentType: 'application/json',
-                        success: function() {
-                            $('.modal').remove();
-                            alert('User added successfully!');
-                        }
+                        contentType: "application/json",
+                        success: function () {
+                            $(".modal").remove();
+                            alert("User added successfully!");
+                        },
                     });
                 });
 
-                $('.close-modal').on('click', function() {
-                    $('.modal').remove();
+                $(".close-modal").on("click", function () {
+                    $(".modal").remove();
                 });
-            }
+            },
         });
     });
 
     $(document).on("click", ".chat", async function () {
         let chatId = $(this).attr("chat-id");
-        let previousChatId = $(".messenger-header").attr('active-chat');
+        let previousChatId = $(".messenger-header").attr("active-chat");
 
         if (previousChatId) {
-            socket.emit('leave-from-chat', previousChatId);
+            socket.emit("leave-from-chat", previousChatId);
         }
         socket.emit("join-into-chat", chatId);
-        
+
         let chat = await getChatInfo(chatId);
         let messages = await getAllMessagesFromChat(chatId);
         renderActiveChat(chatId);
@@ -123,10 +126,10 @@ $(document).ready(function () {
 });
 
 function renderActiveChat(chatId) {
-    $(".chat").each(function() {
-        $(this).attr('active', 'false');
+    $(".chat").each(function () {
+        $(this).attr("active", "false");
     });
-    $(`.chat[chat-id='${chatId}']`).attr('active', 'true');
+    $(`.chat[chat-id='${chatId}']`).attr("active", "true");
 }
 
 function renderAllChats() {
@@ -135,7 +138,7 @@ function renderAllChats() {
         url: "/chats/",
         success: function (chats) {
             $(".chats").html("");
-            $.each(chats, function(index, chat) {
+            $.each(chats, function (index, chat) {
                 $(".chats").append(
                     `<div class='chat' chat-id='${chat.id}'>${chat.name}</div>`
                 );
@@ -168,13 +171,28 @@ async function sendMessage(chatId, message) {
     });
 }
 
+function escapeHTML(str) {
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function renderChat(messages) {
     $(".messages").html("");
     messages.forEach((m) => {
-        $(".messages").append(`
-            <div class="message ${m.user_id == myUserId? "my-message" : ''}" > ${m.user_id != myUserId? m.username : ''} <pre>${m.message}</pre> </div>
-        `);
+       appendMessage(m);
     });
+}
+
+function appendMessage(m) {
+    $(".messages").append(`
+        <div class="message ${m.user_id == myUserId? "my-message" : ''}" > ${m.user_id != myUserId? escapeHTML(m.username) : ''} <pre>${escapeHTML(m.message)}</pre> </div>
+    `);
+
+    $(".messages").scrollTop($(".messages")[0].scrollHeight);
 }
 
 function renderChatHeader(chatInfo) {
