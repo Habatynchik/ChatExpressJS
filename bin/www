@@ -27,10 +27,12 @@ io.on('connection', (socket) => {
     console.log('A user connected');
 
     socket.on('join-into-chat', (chatId) => {
+        console.log(`Joined into chat ${chatId}`)
         socket.join(chatId);
     })
 
     socket.on('leave-from-chat', (chatId) => {
+        console.log(`Leaved from chat ${chatId}`)
         socket.leave(chatId);
     })
 

@@ -118,7 +118,13 @@ router.post('/:id/messages', function (req, res, next) {
     let message = req.body.message;
 
     messageService.insertMessage(message, userId, chatId)
-        .then((message) => {
+        .then((messageData) => {
+            req.app.io.to(chatId).emit('send-message', {
+                chatId: chatId,
+                userId: userId,
+                username: req.session.user.username,
+                message: message,
+            })
             res.send(message);
         })
         .catch((error) => {

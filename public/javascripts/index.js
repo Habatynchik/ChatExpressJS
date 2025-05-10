@@ -1,3 +1,6 @@
+let socket = io();
+
+
 $(document).ready(function () {
     renderAllChats();
 
@@ -78,6 +81,13 @@ $(document).ready(function () {
 
     $(document).on("click", ".chat", async function () {
         let chatId = $(this).attr("chat-id");
+        let previousChatId = $(".messenger-header").attr('active-chat');
+
+        if (previousChatId) {
+            socket.emit('leave-from-chat', previousChatId);
+        }
+        socket.emit("join-into-chat", chatId);
+        
         let chat = await getChatInfo(chatId);
         let messages = await getAllMessagesFromChat(chatId);
         renderActiveChat(chatId);
