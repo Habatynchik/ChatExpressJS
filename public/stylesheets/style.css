@@ -75,3 +75,18 @@ header {
 .chat[active='true'] {
   background-color: blueviolet;
 }
+.register {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  overflow-y: scroll;
+  background-color: rgb(80, 154, 129);
+}
+.header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100%;
+  background-color: rgb(80, 154, 129);
+}
