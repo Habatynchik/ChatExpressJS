@@ -1,5 +1,8 @@
 let socket = io();
 
+socket.on("send-message", function (data) {
+    console.log(data)
+})
 
 $(document).ready(function () {
     renderAllChats();
