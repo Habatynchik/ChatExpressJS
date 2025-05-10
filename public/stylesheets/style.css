@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
 }
+
 header {
   display: flex;
   justify-content: end;
@@ -21,29 +22,95 @@ header {
   width: 20vw;
   display: flex;
   flex-direction: column;
-  user-select: none; 
+  user-select: none;
 }
 
 .messenger-block {
   background-color: rgb(80, 154, 129);
-  width: 80vw;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
+}
+
+.users-block {
+  width: 20vw;
+  background-color: rgb(80, 154, 129);
+}
+
+.users-header {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  background-color: bisque;
+}
+
+.burger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.messenger-header .burger {
   height: 100%;
 }
 
 .messages {
   height: 100%;
   width: 100%;
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 
-.messenger-block form {
+.messages .message {
+  margin: 1px 0;
+  background: #0400002b;
+  color: rgb(67, 25, 25);
+  font-size: 1.5rem;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-family: 'Times New Roman', Times, serif;
+  max-width: 500px;      
+}
+
+.messages .my-message {
+  align-self: flex-end;
+}
+
+.messages .message pre {
+  color: black;
+  font-size: 1rem;
+  font-family: 'Times New Roman', Times, serif;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Hide scroll */
+.messages {
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.messages::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
+}
+
+.messenger-block .messanger-form {
   padding: 10px;
   display: flex;
 }
 
-.messenger-block form input{
+.messenger-block .messanger-form .message-input {
   width: 100%;
+  resize: none;
+  overflow: hidden;
+  min-height: 1em;
+  line-height: 1.2em;
 }
 
 .chats {
@@ -54,13 +121,15 @@ header {
   overflow-y: scroll;
 }
 
-.chats::-webkit-scrollbar { 
-  display: none;  /* Safari and Chrome */
+.chats::-webkit-scrollbar {
+  display: none;
+  /* Safari and Chrome */
 }
 
-.chats div{
+.chats div {
   padding: 10px 0;
 }
+
 .chat {
   width: 100%;
   text-align: center;
@@ -72,21 +141,100 @@ header {
   padding: 20px 0;
   background-color: blanchedalmond;
 }
+
 .chat[active='true'] {
   background-color: blueviolet;
 }
-.register {
+
+.messenger-header {
+  height: 10%;
+  width: 100%;
   display: flex;
-  flex-direction: column;
+  background-color: bisque;
+  justify-content: space-around;
   align-items: center;
-  height: 100%;
-  overflow-y: scroll;
-  background-color: rgb(80, 154, 129);
 }
-.header{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 100%;
-  background-color: rgb(80, 154, 129);
+
+.messenger-header img {
+  height: 80%;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    max-width: 90%;
+    padding: 20px;
+    position: relative;
+    animation: modalSlideIn 0.3s ease;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.user-list {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+}
+
+.user-option {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-option:hover {
+    background-color: #f0f0f0;
+}
+
+.close-modal {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.close-modal:hover {
+    background-color: #d32f2f;
 }
