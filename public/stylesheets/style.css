@@ -238,3 +238,14 @@ header {
 .close-modal:hover {
     background-color: #d32f2f;
 }
+/*
+REGISTER_LOGIN
+*/
+.register {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    background-color: bisque;
+    justify-content: space-around;
+    align-items: center;
+}
