@@ -2,6 +2,13 @@ const userQueries = {
     SELECT_USER_BY_USERNAME: "SELECT * FROM users WHERE username = $1;",
     SELECT_USER_BY_ID: "SELECT * FROM users WHERE id = $1;",
     SELECT_ALL_USERS: "SELECT * FROM users;",
+    SELECT_ALL_USERS_NOT_IN_CHT: `
+        SELECT distinct users.* FROM users
+        WHERE  users.id NOT IN (
+            SELECT user_id FROM chat_members
+            WHERE chat_id = $1
+        );
+    `,
     SELECT_USER_BY_USERNAME_AND_PASSWORD: "SELECT * FROM users WHERE username = $1 AND password = $2;",
     CREATE_USER: "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *;",
     DELETE_USER: "DELETE FROM users WHERE id = $1;",

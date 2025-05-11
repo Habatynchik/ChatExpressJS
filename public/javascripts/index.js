@@ -1,33 +1,104 @@
+let socket = io();
+
+socket.on("send-message", function (data) {
+    appendMessage(data);
+});
+
 $(document).ready(function () {
     renderAllChats();
 
-    $('.send-btn').click(async function (e) {
-        let chatId = $(".messenger-header").attr('active-chat');
-        let message = $(".message-input").val();  
-        $(".message-input").val('');  
-        await sendMessage(chatId, message);
+    $(".send-btn").click(async function () {
+        await handleSend();
     });
 
-    $(document).on('click', '.messenger-header button', function () {
-        let chatId = $(".messenger-header").attr('active-chat');
+    $(".message-input").keydown(async function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            await handleSend();
+        }
+    });
+
+    async function handleSend() {
+        let chatId = $(".messenger-header").attr("active-chat");
+        let message = $(".message-input").val().trim();
+        if (message) {
+            message = $(".message-input").val();
+            $(".message-input").val("");
+            await sendMessage(chatId, message);
+        }
+    }
+
+    $(document).on("click", ".messenger-header .burger", function () {
+        $(".users-block").toggle();
+    });
+
+    $(document).on("click", ".messenger-header button", async function () {
+        let chatId = $(".messenger-header").attr("active-chat");
+        let chat = await getChatInfo(chatId);
+
         $.ajax({
-            type: 'POST',
-            url: `/chats/${chatId}/members`,
-            data: {
-                members: [
-                    {id: prompt("Enter userID")}
-                ]
+            type: "GET",
+            url: `/users/available/${chatId}`,
+            success: function (users) {
+                let userListHtml =
+                    users.length === 0
+                        ? "No users available"
+                        : $.map(users, function (user) {
+                              return `<div class='user-option' data-user-id='${user.id}'>${user.username}</div>`;
+                          }).join("");
+                let modalHtml = `
+                    <div class='modal'>
+                        <div class='modal-container'>
+                            <div class='modal-header'>
+                                <h2>Add user to ${chat.name}</h2>
+                                <button class='close-modal'>×</button>
+                            </div>
+                            <div class='modal-content'>
+                                <div class='user-list'>${userListHtml}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                $("body").append(modalHtml);
+
+                $(".user-option").on("click", function () {
+                    let userId = $(this).data("user-id");
+                    $.ajax({
+                        type: "POST",
+                        url: `/chats/${chatId}/members`,
+                        data: JSON.stringify({
+                            members: [{ id: userId }],
+                        }),
+                        contentType: "application/json",
+                        success: function () {
+                            $(".modal").remove();
+                            alert("User added successfully!");
+                        },
+                    });
+                });
+
+                $(".close-modal").on("click", function () {
+                    $(".modal").remove();
+                });
             },
         });
     });
 
     $(document).on("click", ".chat", async function () {
         let chatId = $(this).attr("chat-id");
+        let previousChatId = $(".messenger-header").attr("active-chat");
+
+        if (previousChatId) {
+            socket.emit("leave-from-chat", previousChatId);
+        }
+        socket.emit("join-into-chat", chatId);
+
         let chat = await getChatInfo(chatId);
-        let messages = await getAllMessagesFromChat(chatId)
-        renderActiveChat(chatId)
-        renderChatHeader(chat)
-        renderChat(messages)
+        let messages = await getAllMessagesFromChat(chatId);
+        renderActiveChat(chatId);
+        renderChatHeader(chat);
+        renderChat(messages);
     });
 
     $(".create-chat").click(function (e) {
@@ -47,13 +118,18 @@ $(document).ready(function () {
             },
         });
     });
+
+    $(".message-input").on("input", function () {
+        $(this).height(0);
+        $(this).height(this.scrollHeight);
+    });
 });
 
 function renderActiveChat(chatId) {
-    $(".chat").each(function(e) {
-        $(this).attr('active', false);
-    }) 
-    $(`.chat[chat-id='${chatId}']`).attr('active', true);
+    $(".chat").each(function () {
+        $(this).attr("active", "false");
+    });
+    $(`.chat[chat-id='${chatId}']`).attr("active", "true");
 }
 
 function renderAllChats() {
@@ -62,7 +138,7 @@ function renderAllChats() {
         url: "/chats/",
         success: function (chats) {
             $(".chats").html("");
-            chats.forEach((chat) => {
+            $.each(chats, function (index, chat) {
                 $(".chats").append(
                     `<div class='chat' chat-id='${chat.id}'>${chat.name}</div>`
                 );
@@ -74,14 +150,13 @@ function renderAllChats() {
 async function getChatInfo(chatId) {
     return await $.ajax({
         type: "GET",
-        url: `/chats/${chatId}`
+        url: `/chats/${chatId}`,
     });
 }
 
 async function getAllMessagesFromChat(chatId) {
     return await $.ajax({
         type: "GET",
-        async: false,
         url: `/chats/${chatId}/messages`,
     });
 }
@@ -91,26 +166,44 @@ async function sendMessage(chatId, message) {
         type: "POST",
         url: `/chats/${chatId}/messages`,
         data: {
-            message: message
+            message: message,
         },
     });
 }
 
-function renderChat(messages) {
-    $(".messages").html('');
-    messages.forEach(m => {
-        $('.messages').append(`
-            <div class="message-text"> <p style="margin-bottom: 0"> <b> ${m.username} </b> <br> ${m.message} </p>  </div>
-        `);
-    })
+function escapeHTML(str) {
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
-function renderChatHeader(chatInfo){
-    $(".messenger-header").html('');
-    $(".messenger-header").attr('active-chat', chatInfo.id);
-    $('.messenger-header').append(`
+function renderChat(messages) {
+    $(".messages").html("");
+    messages.forEach((m) => {
+       appendMessage(m);
+    });
+}
+
+function appendMessage(m) {
+    $(".messages").append(`
+        <div class="message ${m.user_id == myUserId? "my-message" : ''}" > ${m.user_id != myUserId? escapeHTML(m.username) : ''} <pre>${escapeHTML(m.message)}</pre> </div>
+    `);
+
+    $(".messages").scrollTop($(".messages")[0].scrollHeight);
+}
+
+function renderChatHeader(chatInfo) {
+    $(".messenger-header").html("");
+    $(".messenger-header").attr("active-chat", chatInfo.id);
+    $(".messenger-header").append(`
         <img src="${chatInfo.logo_url}" alt="">
         <h1>${chatInfo.name}</h1>
-        <button class="add-user">Add user</button>    
-    `);    
+        <button class="add-user">Add user</button> 
+        <div class="burger"> 
+            <img src = '../images/burger.png'>
+        </div>   
+    `);
 }

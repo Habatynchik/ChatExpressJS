@@ -3,13 +3,13 @@ module.exports = (req, res, next) => {
 
     if ((req.path === '/auth/login' || req.path === '/auth/register')
         && req.session.user) {
-        res.redirect('/');
+        return res.redirect('/');
     }
     if (req.path === '/auth/login' || req.path === '/auth/register') {
         return next()
     }
     if (!req.session.user) {
-        res.redirect('/auth/login');
+        return res.redirect('/auth/login');
     }
     next()
 }
