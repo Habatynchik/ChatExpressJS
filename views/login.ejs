@@ -8,13 +8,13 @@
     <title>Document</title>
 </head>
 <body>
-<form action="/auth/login" method="post">
+<form action="/auth/login" method="post" class="login">
     <input type="text" name="username" placeholder="username">
     <input type="password" name="password" placeholder="password">
 
     <b><%= error %></b>
 
-    <button type="submit"> OK </button>
+    <button type="submit" class="submit_btn"> OK </button>
 
     <a href="/auth/register"> register </a>
 </form>
