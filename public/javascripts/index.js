@@ -44,10 +44,10 @@ $(document).ready(function () {
                     users.length === 0
                         ? "No users available"
                         : $.map(users, function (user) {
-                              return `<div class='user-option' data-user-id='${user.id}'>${user.username}</div>`;
-                          }).join("");
+                            return `<div class='user-option' data-user-id='${user.id}'>${user.username}</div>`;
+                        }).join("");
                 let modalHtml = `
-                    <div class='modal'>
+                    <div class='modal-window'>
                         <div class='modal-container'>
                             <div class='modal-header'>
                                 <h2>Add user to ${chat.name}</h2>
@@ -68,18 +68,18 @@ $(document).ready(function () {
                         type: "POST",
                         url: `/chats/${chatId}/members`,
                         data: JSON.stringify({
-                            members: [{ id: userId }],
+                            members: [{id: userId}],
                         }),
                         contentType: "application/json",
                         success: function () {
-                            $(".modal").remove();
+                            $(".modal-window").remove();
                             alert("User added successfully!");
                         },
                     });
                 });
 
                 $(".close-modal").on("click", function () {
-                    $(".modal").remove();
+                    $(".modal-window").remove();
                 });
             },
         });
@@ -102,21 +102,25 @@ $(document).ready(function () {
     });
 
     $(".create-chat").click(function (e) {
-        let chat = {
-            name: prompt("Enter chat name"),
-            description: "none",
-            logo_url: "https://img.cryptorank.io/coins/stonks1732650263205.png",
-        };
-        $.ajax({
-            type: "POST",
-            url: "/chats/",
-            data: chat,
-            success: function (chat) {
-                $(".chats").append(
-                    `<div class='chat' chat-id='${chat.id}'>${chat.name}</div>`
-                );
-            },
-        });
+        let chatName = prompt("Enter chat name").trim();
+        if (chatName) {
+
+            let chat = {
+                name: chatName,
+                description: "none",
+                logo_url: "https://img.cryptorank.io/coins/stonks1732650263205.png",
+            };
+            $.ajax({
+                type: "POST",
+                url: "/chats/",
+                data: chat,
+                success: function (chat) {
+                    $(".chats").append(
+                        `<div class='chat' chat-id='${chat.id}'>${chat.name}</div>`
+                    );
+                },
+            });
+        }
     });
 
     $(".message-input").on("input", function () {
@@ -162,6 +166,7 @@ async function getAllMessagesFromChat(chatId) {
 }
 
 async function sendMessage(chatId, message) {
+
     return await $.ajax({
         type: "POST",
         url: `/chats/${chatId}/messages`,
@@ -183,13 +188,13 @@ function escapeHTML(str) {
 function renderChat(messages) {
     $(".messages").html("");
     messages.forEach((m) => {
-       appendMessage(m);
+        appendMessage(m);
     });
 }
 
 function appendMessage(m) {
     $(".messages").append(`
-        <div class="message ${m.user_id == myUserId? "my-message" : ''}" > ${m.user_id != myUserId? escapeHTML(m.username) : ''} <pre>${escapeHTML(m.message)}</pre> </div>
+        <div class="message ${m.user_id == myUserId ? "my-message" : ''}" > ${m.user_id != myUserId ? escapeHTML(m.username) : ''} <pre>${escapeHTML(m.message)}</pre> </div>
     `);
 
     $(".messages").scrollTop($(".messages")[0].scrollHeight);
@@ -201,7 +206,7 @@ function renderChatHeader(chatInfo) {
     $(".messenger-header").append(`
         <img src="${chatInfo.logo_url}" alt="">
         <h1>${chatInfo.name}</h1>
-        <button>Add user</button> 
+        <button class="add-user">Add user</button> 
         <div class="burger"> 
             <img src = '../images/burger.png'>
         </div>   
