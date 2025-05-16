@@ -251,5 +251,6 @@ header {
     display: flex;
     justify-content: center;
     color: #00B7FF;
+    flex-direction: column;
 }
 
