@@ -21,7 +21,14 @@ app.set('port', port);
  */
 
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+    path: '/socket.io',
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST']
+    },
+    transports: ['websocket', 'polling']
+});
 
 io.on('connection', (socket) => {
     console.log('A user connected');
