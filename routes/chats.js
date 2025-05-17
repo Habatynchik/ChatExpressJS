@@ -32,7 +32,7 @@ router.post('/', function (req, res, next) {
         description: req.body.description,
         logo_url: req.body.logo_url,
     }
-    if (chat.name || chat.description || chat.logo_url){
+    if (!chat.name || !chat.description || !chat.logo_url){
         res.send({error: 'Some field/value is missing'})
         return;
     }
