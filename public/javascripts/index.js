@@ -1,4 +1,7 @@
-let socket = io();
+let socket = io(window.location.origin, {
+    path: '/socket.io',
+    transports: ['websocket', 'polling']
+});
 
 socket.on("send-message", function (data) {
     appendMessage(data);
