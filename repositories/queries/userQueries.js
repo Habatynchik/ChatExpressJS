@@ -4,7 +4,6 @@ const userQueries = {
     SELECT_ALL_USERS: "SELECT * FROM users;",
     SELECT_ALL_USERS_NOT_IN_CHT: `
         SELECT distinct users.* FROM users
-        JOIN chat_members cm ON users.id = cm.user_id
         WHERE  users.id NOT IN (
             SELECT user_id FROM chat_members
             WHERE chat_id = $1

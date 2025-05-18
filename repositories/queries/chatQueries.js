@@ -6,7 +6,7 @@ const chatMessages =  {
         SELECT * FROM chats c WHERE c.id = $1;
     `,
     SELECT_ALL_CHATS_BY_USER_ID: `
-        SELECT c.* FROM chats c 
+        SELECT distinct c.* FROM chats c 
             JOIN chat_members cm on c.id = cm.chat_id 
                    WHERE cm.user_id = $1;
     `,

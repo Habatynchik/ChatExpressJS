@@ -32,6 +32,10 @@ router.post('/', function (req, res, next) {
         description: req.body.description,
         logo_url: req.body.logo_url,
     }
+    if (!chat.name || !chat.description || !chat.logo_url){
+        res.send({error: 'Some field/value is missing'})
+        return;
+    }
     chatService.createChat(chat)
         .then(async (chat) => {
             await chatService.addMemberIntoChat(userId, chat.id)
@@ -118,7 +122,13 @@ router.post('/:id/messages', function (req, res, next) {
     let message = req.body.message;
 
     messageService.insertMessage(message, userId, chatId)
-        .then((message) => {
+        .then((messageData) => {
+            req.app.io.to(chatId).emit('send-message', {
+                chatId: chatId,
+                user_id: userId,
+                username: req.session.user.username,
+                message: message,
+            })
             res.send(message);
         })
         .catch((error) => {
